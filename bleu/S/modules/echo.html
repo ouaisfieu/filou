@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Écho — PéTAL OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=DM+Sans&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0f0f0f;
+      color: #f0ede8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .echo-container {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .echo-input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #333;
+      color: #f0ede8;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .echo-input:focus {
+      outline: none;
+      border-bottom-color: #7eb8a2;
+    }
+
+    .echo-input::placeholder {
+      color: #444;
+      font-style: italic;
+    }
+
+    .echoes {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 200px;
+    }
+
+    .echo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      transition: all 0.5s ease;
+    }
+
+    .echo:nth-child(1) { color: rgba(240, 237, 232, 0.9); font-size: 1.4rem; }
+    .echo:nth-child(2) { color: rgba(240, 237, 232, 0.6); font-size: 1.2rem; }
+    .echo:nth-child(3) { color: rgba(240, 237, 232, 0.4); font-size: 1rem; }
+    .echo:nth-child(4) { color: rgba(240, 237, 232, 0.2); font-size: 0.9rem; }
+    .echo:nth-child(5) { color: rgba(240, 237, 232, 0.1); font-size: 0.8rem; }
+
+    .hint {
+      position: fixed;
+      bottom: 2rem;
+      font-size: 0.75rem;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="echo-container">
+    <input 
+      type="text" 
+      class="echo-input" 
+      id="input"
+      placeholder="Dis quelque chose..."
+      autocomplete="off"
+    >
+    <div class="echoes" id="echoes"></div>
+  </div>
+  <div class="hint">Appuie sur Entrée pour créer un écho</div>
+
+  <script>
+    const input = document.getElementById('input');
+    const echoes = document.getElementById('echoes');
+    const maxEchoes = 5;
+    let echoList = [];
+
+    function transform(text, level) {
+      // Each echo transforms the text slightly
+      const transforms = [
+        t => t, // First echo is unchanged
+        t => t.split('').reverse().join(''), // Reverse
+        t => t.toUpperCase(), // Uppercase
+        t => t.split(' ').sort(() => Math.random() - 0.5).join(' '), // Shuffle words
+        t => t.replace(/[aeiou]/gi, '.'), // Remove vowels
+      ];
+      return transforms[level % transforms.length](text);
+    }
+
+    function addEcho(text) {
+      echoList.unshift(text);
+      if (echoList.length > maxEchoes) {
+        echoList.pop();
+      }
+      renderEchoes();
+    }
+
+    function renderEchoes() {
+      echoes.innerHTML = '';
+      echoList.forEach((text, i) => {
+        const div = document.createElement('div');
+        div.className = 'echo';
+        div.textContent = transform(text, i);
+        div.style.animation = 'fadeIn 0.5s ease';
+        echoes.appendChild(div);
+      });
+    }
+
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        addEcho(input.value.trim());
+        input.value = '';
+      }
+    });
+
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

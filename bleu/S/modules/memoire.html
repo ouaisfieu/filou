@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mémoire — PéTAL OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=DM+Sans&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0f0f0f;
+      color: #f0ede8;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .memories {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .memory {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .memory:nth-child(1) { animation-delay: 0.1s; }
+    .memory:nth-child(2) { animation-delay: 0.2s; }
+    .memory:nth-child(3) { animation-delay: 0.3s; }
+    .memory:nth-child(4) { animation-delay: 0.4s; }
+    .memory:nth-child(5) { animation-delay: 0.5s; }
+
+    .memory-date {
+      font-size: 0.75rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      font-family: monospace;
+    }
+
+    .memory-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #a8a8a8;
+      line-height: 1.6;
+    }
+
+    .memory-text::before { content: '"'; color: #7eb8a2; }
+    .memory-text::after { content: '"'; color: #7eb8a2; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .add-memory {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #1a1a1a;
+      border-radius: 8px;
+    }
+
+    .add-memory input {
+      width: 100%;
+      padding: 0.75rem;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #f0ede8;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .add-memory input:focus {
+      outline: none;
+      border-color: #7eb8a2;
+    }
+
+    .add-memory input::placeholder {
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="memories" id="memories">
+    <div class="memory">
+      <div class="memory-date">2024-03-15 • 14:23</div>
+      <div class="memory-text">La lumière ce matin avait une couleur que je ne retrouverai jamais.</div>
+    </div>
+    <div class="memory">
+      <div class="memory-date">2024-02-28 • 09:11</div>
+      <div class="memory-text">Il y avait du sel sur mes lèvres et l'océan était calme.</div>
+    </div>
+    <div class="memory">
+      <div class="memory-date">2024-01-07 • 22:45</div>
+      <div class="memory-text">Elle a ri, et pendant un instant tout était simple.</div>
+    </div>
+    <div class="memory">
+      <div class="memory-date">2023-11-30 • 16:02</div>
+      <div class="memory-text">Le café refroidit. La conversation aussi.</div>
+    </div>
+    <div class="memory">
+      <div class="memory-date">2023-08-14 • 03:17</div>
+      <div class="memory-text">Les étoiles filantes n'attendent personne.</div>
+    </div>
+
+    <div class="add-memory">
+      <input type="text" placeholder="Ajoute un souvenir..." id="newMemory">
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('newMemory').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && this.value.trim()) {
+        const memories = document.getElementById('memories');
+        const addBox = document.querySelector('.add-memory');
+        
+        const now = new Date();
+        const date = now.toISOString().split('T')[0] + ' • ' + 
+                     now.toTimeString().slice(0,5);
+        
+        const memory = document.createElement('div');
+        memory.className = 'memory';
+        memory.innerHTML = `
+          <div class="memory-date">${date}</div>
+          <div class="memory-text">${this.value}</div>
+        `;
+        memory.style.animation = 'fadeIn 0.6s ease forwards';
+        
+        memories.insertBefore(memory, addBox);
+        this.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

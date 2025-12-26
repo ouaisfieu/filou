@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perception — PéTAL OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0f0f0f;
+      color: #f0ede8;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 4px;
+      padding: 1rem;
+      min-height: 100vh;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      background: #1a1a1a;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      cursor: crosshair;
+    }
+
+    .cell:hover {
+      background: #7eb8a2;
+      transform: scale(1.1);
+      z-index: 10;
+    }
+
+    .cell.active {
+      background: #7eb8a2;
+      animation: pulse 0.5s ease;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .info {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.8);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+  <div class="info">Survole pour percevoir. Clique pour marquer.</div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const count = 200;
+
+    for (let i = 0; i < count; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.style.animationDelay = `${Math.random() * 0.5}s`;
+      cell.addEventListener('click', () => cell.classList.toggle('active'));
+      grid.appendChild(cell);
+    }
+  </script>
+</body>
+</html>
