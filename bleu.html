@@ -1,0 +1,952 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══════════════════════════════════════════
+       THEME: SOBER (Dark)
+       ═══════════════════════════════════════════ */
+    :root {
+      --bg-primary: #0f0f0f;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #252525;
+      --bg-module: #1a1a1a;
+      --text-primary: #f0ede8;
+      --text-secondary: #a8a8a8;
+      --text-muted: #666666;
+      --accent: #7eb8a2;
+      --accent-soft: rgba(126, 184, 162, 0.1);
+      --border: rgba(255, 255, 255, 0.06);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --radius: 6px;
+      --radius-lg: 8px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --nav-item-padding: 0.875rem 1.5rem;
+      --transition: 0.3s ease;
+    }
+
+    /* ═══════════════════════════════════════════
+       THEME: FUNKY (Scratch-style)
+       ═══════════════════════════════════════════ */
+    .theme-funky {
+      --bg-primary: #4C97FF;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f0f8ff;
+      --bg-module: #ffffff;
+      --text-primary: #575E75;
+      --text-secondary: #575E75;
+      --text-muted: #7c8399;
+      --accent: #FFAB19;
+      --accent-soft: rgba(255, 171, 25, 0.15);
+      --border: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.12);
+      --radius: 12px;
+      --radius-lg: 16px;
+      --font-display: 'Nunito', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      --nav-item-padding: 1rem 1.25rem;
+      --transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .theme-funky .system-bar {
+      background: linear-gradient(135deg, #4C97FF 0%, #855CD6 100%);
+      border-bottom: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .theme-funky .sys-brand h1,
+    .theme-funky .sys-status {
+      color: white !important;
+    }
+
+    .theme-funky .btn {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      font-weight: 700;
+      border-radius: 20px;
+    }
+
+    .theme-funky .btn:hover {
+      background: white;
+      color: #4C97FF;
+      border-color: white;
+      transform: scale(1.05);
+    }
+
+    .theme-funky .nav-panel {
+      background: var(--bg-secondary);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    }
+
+    .theme-funky .nav-item {
+      margin: 0.25rem 0.75rem;
+      border-radius: 10px;
+      border-left: none;
+      font-weight: 600;
+    }
+
+    .theme-funky .nav-item:hover {
+      background: var(--accent-soft);
+      transform: translateX(4px);
+    }
+
+    .theme-funky .nav-item.is-active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 2px 8px rgba(255, 171, 25, 0.4);
+    }
+
+    .theme-funky .meta-panel {
+      background: linear-gradient(180deg, #855CD6 0%, #4C97FF 100%);
+      border: none;
+    }
+
+    .theme-funky .meta-header h2,
+    .theme-funky .meta-content,
+    .theme-funky .meta-content p {
+      color: white !important;
+    }
+
+    .theme-funky .meta-content .highlight {
+      color: #FFBF00 !important;
+      background: rgba(255,255,255,0.2);
+      padding: 0.1em 0.4em;
+      border-radius: 6px;
+    }
+
+    .theme-funky .module-view {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      margin: 0.5rem;
+    }
+
+    .theme-funky .scratch-cat {
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════
+       BASE STYLES
+       ═══════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 600; }
+
+    /* ═══════════════════════════════════════════
+       SYSTEM BAR
+       ═══════════════════════════════════════════ */
+    .system-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.875rem 1.25rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+
+    .sys-brand { display: flex; align-items: baseline; gap: 0.5rem; }
+    .sys-brand h1 { font-size: 1.25rem; transition: color var(--transition); }
+    .sys-status { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+
+    .sys-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      padding: 0.5rem 0.875rem;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+    .btn:active { transform: scale(0.96); }
+    .btn-icon { width: 2.25rem; padding: 0.5rem; }
+    .menu-toggle { display: flex; }
+
+    .btn svg { transition: transform var(--transition); }
+    .theme-funky .btn:hover svg { transform: rotate(20deg); }
+
+    /* ═══════════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════════ */
+    .layout { flex: 1; display: flex; flex-direction: column; }
+
+    /* ═══════════════════════════════════════════
+       NAV PANEL
+       ═══════════════════════════════════════════ */
+    .nav-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg-secondary);
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-panel.is-open { transform: translateX(0); }
+
+    .nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-header h2 { font-size: 1.125rem; }
+
+    .nav-close {
+      width: 2rem; height: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      background: none; border: none;
+      cursor: pointer; border-radius: var(--radius);
+      transition: all var(--transition);
+    }
+    .nav-close:hover { background: var(--accent-soft); color: var(--accent); }
+
+    .nav-list { flex: 1; overflow-y: auto; padding: 1rem 0; list-style: none; }
+
+    .nav-item {
+      padding: var(--nav-item-padding);
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      border-left: 2px solid transparent;
+    }
+    .nav-item:hover { background: var(--accent-soft); color: var(--text-primary); }
+    .nav-item.is-active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 500;
+    }
+
+    .nav-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0; visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .nav-overlay.is-visible { opacity: 1; visibility: visible; }
+
+    /* ═══════════════════════════════════════════
+       MODULE VIEW
+       ═══════════════════════════════════════════ */
+    .module-view {
+      flex: 1;
+      min-height: 50vh;
+      background: var(--bg-tertiary);
+      position: relative;
+      overflow: auto;
+      transition: all var(--transition);
+    }
+
+    .module-content {
+      padding: 2rem;
+      height: 100%;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       META PANEL
+       ═══════════════════════════════════════════ */
+    .meta-panel { 
+      background: var(--bg-secondary); 
+      border-top: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+
+    .meta-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .meta-header h2 { font-size: 1rem; }
+
+    .meta-toggle {
+      width: 1.5rem; height: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+    .meta-panel.is-collapsed .meta-toggle { transform: rotate(180deg); }
+
+    .meta-content {
+      padding: 1.25rem;
+      max-height: 40vh;
+      overflow-y: auto;
+      transition: all 0.35s ease;
+    }
+    .meta-panel.is-collapsed .meta-content {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    .meta-content p {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+    .meta-content p:last-child { margin-bottom: 0; }
+    .meta-content .highlight { color: var(--accent); font-weight: 600; }
+
+    /* Scratch cat */
+    .scratch-cat {
+      display: none;
+      width: 60px;
+      margin: 1rem auto;
+    }
+
+    /* ═══════════════════════════════════════════
+       DESKTOP
+       ═══════════════════════════════════════════ */
+    @media (min-width: 768px) {
+      .menu-toggle { display: none; }
+      .nav-overlay { display: none; }
+      .layout { flex-direction: row; height: calc(100dvh - 57px); }
+      .nav-panel {
+        position: relative;
+        transform: none;
+        width: 220px;
+        min-width: 220px;
+        border-right: 1px solid var(--border);
+      }
+      .nav-close { display: none; }
+      .module-view { min-height: auto; }
+      .meta-panel {
+        width: 280px;
+        min-width: 280px;
+        border-top: none;
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+      }
+      .meta-header { cursor: default; }
+      .meta-toggle { display: none; }
+      .meta-content { flex: 1; max-height: none; }
+      .meta-panel.is-collapsed .meta-content { max-height: none; padding: 1.25rem; overflow: auto; }
+
+      .theme-funky .nav-panel {
+        border-radius: 0;
+        margin: 0;
+      }
+
+      .theme-funky .module-view {
+        margin: 0.75rem;
+        border-radius: var(--radius-lg);
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .nav-panel { width: 260px; min-width: 260px; }
+      .meta-panel { width: 320px; min-width: 320px; }
+    }
+
+    /* ═══════════════════════════════════════════
+       SCROLLBAR
+       ═══════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    ::selection { background: var(--accent); color: white; }
+
+    /* ═══════════════════════════════════════════
+       MODULE SPECIFIC STYLES
+       ═══════════════════════════════════════════ */
+    
+    /* Accueil */
+    .mod-accueil {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 100%;
+    }
+    .mod-accueil .petal {
+      font-size: clamp(3rem, 10vw, 5rem);
+      animation: float 3s ease-in-out infinite;
+    }
+    .mod-accueil h2 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin: 1rem 0;
+    }
+    .mod-accueil p { color: var(--text-secondary); font-size: 1.125rem; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(5deg); }
+    }
+
+    /* Perception */
+    .mod-perception .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+      gap: 4px;
+    }
+    .mod-perception .cell {
+      aspect-ratio: 1;
+      background: var(--bg-module);
+      border-radius: var(--radius);
+      cursor: crosshair;
+      transition: all 0.2s ease;
+    }
+    .mod-perception .cell:hover {
+      background: var(--accent);
+      transform: scale(1.1);
+      z-index: 1;
+    }
+    .mod-perception .cell.active { background: var(--accent); }
+
+    /* Mémoire */
+    .mod-memoire .memory {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .mod-memoire .memory-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-family: monospace;
+    }
+    .mod-memoire .memory-text {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+    .mod-memoire .memory-text::before,
+    .mod-memoire .memory-text::after { color: var(--accent); }
+    .mod-memoire .memory-text::before { content: '"'; }
+    .mod-memoire .memory-text::after { content: '"'; }
+    .mod-memoire input {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.875rem 1rem;
+      background: var(--bg-module);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+    .mod-memoire input:focus { outline: none; border-color: var(--accent); }
+    .mod-memoire input::placeholder { color: var(--text-muted); }
+
+    /* Rêverie */
+    .mod-reverie {
+      position: absolute;
+      inset: 0;
+      padding: 0 !important;
+    }
+    .mod-reverie canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .mod-reverie .hint {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Écho */
+    .mod-echo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      text-align: center;
+    }
+    .mod-echo input {
+      width: 100%;
+      max-width: 400px;
+      padding: 1rem;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--border-strong);
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .mod-echo input:focus { outline: none; border-color: var(--accent); }
+    .mod-echo input::placeholder { color: var(--text-muted); }
+    .mod-echo .echoes { min-height: 150px; }
+    .mod-echo .echo {
+      font-family: var(--font-display);
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+    .mod-echo .echo:nth-child(1) { font-size: 1.3rem; opacity: 0.9; }
+    .mod-echo .echo:nth-child(2) { font-size: 1.1rem; opacity: 0.6; }
+    .mod-echo .echo:nth-child(3) { font-size: 0.95rem; opacity: 0.4; }
+    .mod-echo .echo:nth-child(4) { font-size: 0.85rem; opacity: 0.2; }
+    .mod-echo .echo:nth-child(5) { font-size: 0.75rem; opacity: 0.1; }
+  </style>
+</head>
+
+<body>
+
+  <header class="system-bar">
+    <div class="sys-brand">
+      <h1>OS</h1>
+      <span class="sys-status" id="sysStatus">— prêt</span>
+    </div>
+    <div class="sys-actions">
+      <button class="btn" onclick="toggleFunky()" id="funkyBtn">
+        <span>🎨 Funky</span>
+      </button>
+      <button class="btn btn-icon menu-toggle" onclick="toggleNav()" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="nav-overlay" onclick="closeNav()"></div>
+
+  <main class="layout">
+
+    <aside class="nav-panel">
+      <div class="nav-header">
+        <h2>Modules</h2>
+        <button class="nav-close" onclick="closeNav()">×</button>
+      </div>
+      <ul class="nav-list" id="moduleList"></ul>
+    </aside>
+
+    <section class="module-view" id="moduleView">
+      <div class="module-content" id="moduleContent">
+        <!-- Module content loads here -->
+      </div>
+    </section>
+
+    <aside class="meta-panel">
+      <div class="meta-header" onclick="toggleMeta()">
+        <h2>Contexte</h2>
+        <div class="meta-toggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"/>
+          </svg>
+        </div>
+      </div>
+      <div class="meta-content" id="metaContent">
+        <p>Sélectionne un module pour explorer.</p>
+        <p class="highlight">Amuse-toi surtout.</p>
+        <!-- Scratch Cat SVG -->
+        <svg class="scratch-cat" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="50" cy="65" rx="35" ry="30" fill="#FFAB19"/>
+          <circle cx="35" cy="55" r="8" fill="white"/>
+          <circle cx="65" cy="55" r="8" fill="white"/>
+          <circle cx="37" cy="55" r="4" fill="#575E75"/>
+          <circle cx="67" cy="55" r="4" fill="#575E75"/>
+          <ellipse cx="50" cy="70" rx="5" ry="3" fill="#CF8B17"/>
+          <path d="M20 35 Q25 15 35 40" fill="#FFAB19" stroke="#CF8B17" stroke-width="2"/>
+          <path d="M80 35 Q75 15 65 40" fill="#FFAB19" stroke="#CF8B17" stroke-width="2"/>
+        </svg>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    // MODULES CONFIG
+    // ══════════════════════════════════════════════════════════════
+    const MODULES = [
+      {
+        id: 'accueil',
+        name: 'Accueil',
+        description: `
+          <p>Bienvenue dans <span class="highlight">OS</span>.</p>
+          <p>Un système d'exploration, un pétale à la fois.</p>
+        `,
+        render: () => `
+          <div class="mod-accueil">
+            <div class="petal">🌸</div>
+            <h2>Bienvenue</h2>
+            <p>Choisis un module pour commencer.</p>
+          </div>
+        `
+      },
+      {
+        id: 'perception',
+        name: 'Perception',
+        description: `
+          <p><span class="highlight">Perception</span> — Module sensoriel.</p>
+          <p>Survole pour sentir. Clique pour marquer.</p>
+        `,
+        render: () => {
+          let html = '<div class="mod-perception"><div class="grid">';
+          for (let i = 0; i < 150; i++) {
+            html += '<div class="cell" onclick="this.classList.toggle(\'active\')"></div>';
+          }
+          html += '</div></div>';
+          return html;
+        }
+      },
+      {
+        id: 'memoire',
+        name: 'Mémoire',
+        description: `
+          <p><span class="highlight">Mémoire</span> — Ce qui reste.</p>
+          <p>Fragments, traces, échos du passé.</p>
+        `,
+        render: () => `
+          <div class="mod-memoire">
+            <div class="memory">
+              <div class="memory-date">2024-03-15 • 14:23</div>
+              <div class="memory-text">La lumière ce matin avait une couleur que je ne retrouverai jamais.</div>
+            </div>
+            <div class="memory">
+              <div class="memory-date">2024-02-28 • 09:11</div>
+              <div class="memory-text">Il y avait du sel sur mes lèvres et l'océan était calme.</div>
+            </div>
+            <div class="memory">
+              <div class="memory-date">2024-01-07 • 22:45</div>
+              <div class="memory-text">Elle a ri, et pendant un instant tout était simple.</div>
+            </div>
+            <input type="text" placeholder="Ajoute un souvenir..." id="newMemory" onkeypress="addMemory(event)">
+          </div>
+        `
+      },
+      {
+        id: 'reverie',
+        name: 'Rêverie',
+        description: `
+          <p><span class="highlight">Rêverie</span> — Module génératif.</p>
+          <p>Bouge pour rêver. Contenu non-réel.</p>
+        `,
+        render: () => `
+          <div class="mod-reverie">
+            <canvas id="dreamCanvas"></canvas>
+            <div class="hint">Bouge la souris pour rêver</div>
+          </div>
+        `,
+        init: initDreamCanvas
+      },
+      {
+        id: 'echo',
+        name: 'Écho',
+        description: `
+          <p><span class="highlight">Écho</span> — Ce qui revient, transformé.</p>
+          <p>Boucles, répétitions, variations.</p>
+        `,
+        render: () => `
+          <div class="mod-echo">
+            <input type="text" placeholder="Dis quelque chose..." id="echoInput" onkeypress="addEcho(event)">
+            <div class="echoes" id="echoes"></div>
+          </div>
+        `
+      }
+    ];
+
+    // ══════════════════════════════════════════════════════════════
+    // GLOBALS
+    // ══════════════════════════════════════════════════════════════
+    let currentModule = null;
+    let isFunky = false;
+    let echoList = [];
+
+    const moduleList = document.getElementById('moduleList');
+    const moduleContent = document.getElementById('moduleContent');
+    const metaContent = document.getElementById('metaContent');
+    const sysStatus = document.getElementById('sysStatus');
+    const funkyBtn = document.getElementById('funkyBtn');
+
+    // ══════════════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════════════
+    function init() {
+      MODULES.forEach(mod => {
+        const li = document.createElement('li');
+        li.className = 'nav-item';
+        li.textContent = mod.name;
+        li.dataset.moduleId = mod.id;
+        li.addEventListener('click', () => loadModule(mod.id));
+        moduleList.appendChild(li);
+      });
+
+      // Load first module
+      loadModule('accueil');
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // LOAD MODULE
+    // ══════════════════════════════════════════════════════════════
+    function loadModule(moduleId) {
+      const mod = MODULES.find(m => m.id === moduleId);
+      if (!mod) return;
+
+      currentModule = mod;
+
+      // Update nav
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('is-active', item.dataset.moduleId === moduleId);
+      });
+
+      // Render module
+      moduleContent.innerHTML = mod.render();
+      
+      // Run init if exists
+      if (mod.init) setTimeout(mod.init, 50);
+
+      // Update meta
+      metaContent.innerHTML = mod.description + (isFunky ? getScratchCat() : '');
+
+      // Update status
+      sysStatus.textContent = `— ${mod.name.toLowerCase()}`;
+
+      closeNav();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // THEME
+    // ══════════════════════════════════════════════════════════════
+    function toggleFunky() {
+      isFunky = !isFunky;
+      document.body.classList.toggle('theme-funky', isFunky);
+      funkyBtn.innerHTML = isFunky ? '<span>🌙 Sobre</span>' : '<span>🎨 Funky</span>';
+      
+      // Refresh meta to show/hide cat
+      if (currentModule) {
+        metaContent.innerHTML = currentModule.description + (isFunky ? getScratchCat() : '');
+      }
+    }
+
+    function getScratchCat() {
+      return `
+        <svg class="scratch-cat" style="display:block" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="50" cy="65" rx="35" ry="30" fill="#FFAB19"/>
+          <circle cx="35" cy="55" r="8" fill="white"/>
+          <circle cx="65" cy="55" r="8" fill="white"/>
+          <circle cx="37" cy="55" r="4" fill="#575E75"/>
+          <circle cx="67" cy="55" r="4" fill="#575E75"/>
+          <ellipse cx="50" cy="70" rx="5" ry="3" fill="#CF8B17"/>
+          <path d="M20 35 Q25 15 35 40" fill="#FFAB19" stroke="#CF8B17" stroke-width="2"/>
+          <path d="M80 35 Q75 15 65 40" fill="#FFAB19" stroke="#CF8B17" stroke-width="2"/>
+        </svg>
+      `;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // NAV
+    // ══════════════════════════════════════════════════════════════
+    function toggleNav() {
+      document.querySelector('.nav-panel').classList.toggle('is-open');
+      document.querySelector('.nav-overlay').classList.toggle('is-visible');
+    }
+
+    function closeNav() {
+      document.querySelector('.nav-panel').classList.remove('is-open');
+      document.querySelector('.nav-overlay').classList.remove('is-visible');
+    }
+
+    function toggleMeta() {
+      if (window.innerWidth < 768) {
+        document.querySelector('.meta-panel').classList.toggle('is-collapsed');
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) closeNav();
+    });
+
+    // ══════════════════════════════════════════════════════════════
+    // MODULE: MÉMOIRE
+    // ══════════════════════════════════════════════════════════════
+    function addMemory(e) {
+      if (e.key !== 'Enter') return;
+      const input = e.target;
+      if (!input.value.trim()) return;
+
+      const container = document.querySelector('.mod-memoire');
+      const now = new Date();
+      const date = now.toISOString().split('T')[0] + ' • ' + now.toTimeString().slice(0, 5);
+
+      const memory = document.createElement('div');
+      memory.className = 'memory';
+      memory.innerHTML = `
+        <div class="memory-date">${date}</div>
+        <div class="memory-text">${input.value}</div>
+      `;
+      memory.style.animation = 'fadeIn 0.4s ease';
+
+      container.insertBefore(memory, input);
+      input.value = '';
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // MODULE: RÊVERIE
+    // ══════════════════════════════════════════════════════════════
+    function initDreamCanvas() {
+      const canvas = document.getElementById('dreamCanvas');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let mouse = { x: 0, y: 0 };
+      let hue = 150;
+      let animId;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+
+      class Particle {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+          this.size = Math.random() * 3 + 1;
+          this.speedX = (Math.random() - 0.5) * 2;
+          this.speedY = (Math.random() - 0.5) * 2;
+          this.life = 1;
+          this.decay = Math.random() * 0.015 + 0.005;
+          this.hue = hue + Math.random() * 30 - 15;
+        }
+
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.life -= this.decay;
+          this.size *= 0.99;
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${this.hue}, 60%, 60%, ${this.life})`;
+          ctx.fill();
+        }
+      }
+
+      function animate() {
+        ctx.fillStyle = isFunky ? 'rgba(240, 248, 255, 0.05)' : 'rgba(15, 15, 15, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < 3; i++) {
+          particles.push(new Particle(
+            mouse.x + (Math.random() - 0.5) * 50,
+            mouse.y + (Math.random() - 0.5) * 50
+          ));
+        }
+
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(); });
+
+        hue += 0.1;
+        if (hue > 360) hue = 0;
+
+        animId = requestAnimationFrame(animate);
+      }
+
+      resize();
+      mouse.x = canvas.width / 2;
+      mouse.y = canvas.height / 2;
+
+      window.addEventListener('resize', resize);
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+      canvas.addEventListener('touchmove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.touches[0].clientX - rect.left;
+        mouse.y = e.touches[0].clientY - rect.top;
+      });
+
+      animate();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // MODULE: ÉCHO
+    // ══════════════════════════════════════════════════════════════
+    function addEcho(e) {
+      if (e.key !== 'Enter') return;
+      const input = e.target;
+      if (!input.value.trim()) return;
+
+      echoList.unshift(input.value.trim());
+      if (echoList.length > 5) echoList.pop();
+
+      const transforms = [
+        t => t,
+        t => t.split('').reverse().join(''),
+        t => t.toUpperCase(),
+        t => t.split(' ').sort(() => Math.random() - 0.5).join(' '),
+        t => t.replace(/[aeiouàâäéèêëïîôùûü]/gi, '.')
+      ];
+
+      const echoes = document.getElementById('echoes');
+      echoes.innerHTML = echoList.map((text, i) => 
+        `<div class="echo">${transforms[i % transforms.length](text)}</div>`
+      ).join('');
+
+      input.value = '';
+    }
+
+    // GO!
+    init();
+  </script>
+
+</body>
+</html>
